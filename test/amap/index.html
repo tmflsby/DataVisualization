@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=c1d6269aff9f2768bb337c97fcf30403"></script>
+    <style>
+        body, html, #container {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+        #container {position: relative;}
+        #tools {position: absolute;right:10px;top:10px;}
+        #tools div button {width: 100px;}
+        .marker {position: absolute;top: 0;right: 0;color: #fff;padding: 4px 10px;box-shadow: 1px 1px 1px rgba(10, 10, 10, .2);white-space: nowrap;font-size: 12px;font-family: ""; background-color: #25A5F7; border-radius: 3px;}
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+	<div id="tools">
+		<div>
+			<button id="show-traf">显示交通</button>
+			<button id="hide-traf">隐藏交通</button>
+		</div>
+		<div>
+			<button id="show-sate">显示卫星</button>
+			<button id="hide-sate">隐藏卫星</button>
+		</div>
+		<div>
+			<button id="show-road">显示道路</button>
+			<button id="hide-road">隐藏道路</button>
+		</div>
+		<div>
+			<button id="show-point">绘制点</button>
+			<button id="hide-point">隐藏点</button>
+		</div>
+		<div>
+			<button id="show-text">绘制文本</button>
+			<button id="hide-text">隐藏文本</button>
+		</div>
+		<div>
+			<button id="show-line">绘制线条</button>
+			<button id="hide-line">隐藏线条</button>
+		</div>
+		<div>
+			<button id="show-circle">绘制圆圈</button>
+			<button id="hide-circle">隐藏圆圈</button>
+		</div>
+		<div>
+			<button id="show-info">绘制窗口</button>
+			<button id="hide-info">隐藏窗口</button>
+		</div>
+    </div>
+    <script>
+        let defaultLayer = new AMap.createDefaultLayer()  // 默认图层
+        let satelliteLayer = new AMap.TileLayer.Satellite() // 卫星图层
+        let roadNetLayer = new AMap.TileLayer.RoadNet()  // 路网图层
+        let trafficLayer = new AMap.TileLayer.Traffic() // 实时交通图层
+
+        // 添加默认图层
+        let map = new AMap.Map('container', {
+            zoom: 11,
+            zooms: [8, 15],
+            layers: [defaultLayer],
+            center: [116.397428, 39.90923],
+            viewMode: '3D', //使用3D视图
+        })
+
+        // 同时引入控件插件
+        AMap.plugin([
+            'AMap.ControlBar',
+            'AMap.ToolBar',
+            'AMap.Scale',
+            'AMap.HawkEye',
+            'AMap.MapType',
+            'AMap.Geolocation',
+        ], () => {
+            // 3D控制罗盘
+            map.addControl(new AMap.ControlBar({
+                position: {
+                    left: '10px',
+                    bottom: '20px'
+                },
+                showControlButton: true,  // 是否显示倾斜、旋转按钮。默认为 true
+            }));
+
+            // 在图面添加工具条控件，工具条控件集成了缩放、平移、定位等功能按钮在内的组合控件
+            map.addControl(new AMap.ToolBar({
+                position: {
+                    top: '10px',
+                    left: '10px'
+                }
+            }))
+
+            // 在图面添加比例尺控件，展示地图在当前层级和纬度下的比例尺
+            map.addControl(new AMap.Scale({
+                position: {
+                    bottom: '10px',
+                    right: '180px'
+                }
+            }))
+
+            // 在图面添加鹰眼控件，在地图右下角显示地图的缩略图
+            map.addControl(new AMap.HawkEye({
+                isOpen:true,
+                position: {
+                    bottom: '10px',
+                    right: '10px'
+                }
+            }))
+
+            // 在图面添加类别切换控件，实现默认图层与卫星图、实施交通图层之间切换的控制
+            // map.addControl(new AMap.MapType({
+            //     position: {
+            //         top: '10px',
+            //         left: '150px'
+            //     }
+            // }))
+
+            // 在图面添加定位控件，用来获取和展示用户主机所在的经纬度位置
+            map.addControl(new AMap.Geolocation({
+                position: {
+                    top: '80px',
+                    left: '10px'
+                }
+            }))
+        })
+
+        let marker = new AMap.Marker({
+            icon: "https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+            position: [116.406315,39.908775],
+            offset: new AMap.Pixel(-13, -30)
+        })
+
+        let contentMarker = new AMap.Marker({
+            position: [116.406315,39.908775],
+            offset: new AMap.Pixel(130, 0)
+        })
+
+        let markerContent = document.createElement("div")
+        let markerSpan = document.createElement("span")
+        markerSpan.className = 'marker'
+        markerSpan.innerHTML = "欢迎学习数据可视化！"
+        markerContent.appendChild(markerSpan)
+
+        let lineArr = [
+            [116.368904, 39.913423],
+            [116.382122, 39.901176],
+            [116.387271, 39.912501],
+            [116.398258, 39.904600]
+        ]
+        let polyline = new AMap.Polyline({
+            path: lineArr,          //设置线覆盖物路径
+            strokeColor: "#3366FF", //线颜色
+            strokeWeight: 5,        //线宽
+            strokeStyle: "solid",   //线样式
+        })
+
+        let infoMarker = new AMap.Marker({
+            position: [116.481181, 39.989792]
+        })
+        let infoWindow = new AMap.InfoWindow({ //创建信息窗体
+            isCustom: true,  //使用自定义窗体
+            content:'<div style="color:red;">信息窗体</div>', //信息窗体的内容可以是任意html片段
+            offset: new AMap.Pixel(16, -45)
+        })
+        infoMarker.on('click', (e) => { //绑定click事件
+            infoWindow.open(map, e.target.getPosition())//打开信息窗体
+        })
+
+
+        let circle = new AMap.Circle({
+            center: new AMap.LngLat(116.39, 39.9),  // 圆心位置
+            radius: 1000, // 圆半径
+            fillColor: 'red',   // 圆形填充颜色
+            strokeColor: '#fff', // 描边颜色
+            strokeWeight: 2 // 描边宽度
+        })
+
+        document.getElementById('show-traf').addEventListener('click', () => {
+            map.add(trafficLayer); //添加图层到地图
+            trafficLayer.show();
+        })
+        document.getElementById('hide-traf').addEventListener('click', () => {
+            trafficLayer.hide();
+        })
+
+        document.getElementById('show-sate').addEventListener('click', () => {
+            map.add(satelliteLayer); //添加图层到地图
+            satelliteLayer.show();
+        })
+        document.getElementById('hide-sate').addEventListener('click', () => {
+            satelliteLayer.hide();
+        })
+
+        document.getElementById('show-road').addEventListener('click', () => {
+            map.add(roadNetLayer); //添加图层到地图
+            roadNetLayer.show();
+        })
+        document.getElementById('hide-road').addEventListener('click', () => {
+            roadNetLayer.hide();
+        })
+
+        document.getElementById('show-point').addEventListener('click', () => {
+            map.add(marker);
+        })
+        document.getElementById('hide-point').addEventListener('click', () => {
+            map.remove(marker);
+        })
+
+        document.getElementById('show-text').addEventListener('click', () => {
+            contentMarker.setMap(map)
+            contentMarker.setContent(markerContent) //更新点标记内容
+            contentMarker.setPosition([116.391467, 39.927761]) //更新点标记位置
+        })
+        document.getElementById('hide-text').addEventListener('click', () => {
+            map.remove(contentMarker)
+        })
+
+        document.getElementById('show-line').addEventListener('click', () => {
+            map.add(polyline)
+        })
+        document.getElementById('hide-line').addEventListener('click', () => {
+            map.remove(polyline)
+        })
+
+        document.getElementById('show-circle').addEventListener('click', () => {
+            map.add(circle)
+        })
+        document.getElementById('hide-circle').addEventListener('click', () => {
+            map.remove(circle)
+        })
+
+        document.getElementById('show-info').addEventListener('click', () => {
+            map.add(infoMarker)
+        })
+        document.getElementById('hide-info').addEventListener('click', () => {
+            map.remove(infoMarker)
+            infoWindow.close()
+        })
+    </script>
+</body>
+</html>
