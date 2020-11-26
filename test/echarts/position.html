@@ -28,8 +28,8 @@
         const chartDom = document.getElementById('chart')
         const chart = echarts.init(chartDom)
 
-        function addInputEvent(dom, key) {
-            dom.addEventListener('input', function(e) {
+        const addInputEvent = (dom, key) => {
+            dom.addEventListener('input', (e) => {
                 let value = e.target.value
                 switch(key) {
                     case 'top':
@@ -49,7 +49,7 @@
             })
         }
 
-        function render() {
+        const render = () => {
             const option = {
                 title: {
                     text: '数据可视化',
@@ -83,7 +83,7 @@
             chart.setOption(option)
         }
 
-        window.onload = function() {
+        window.onload = () => {
             topInput.value = _top
             leftInput.value = _left
             rightInput.value = _right

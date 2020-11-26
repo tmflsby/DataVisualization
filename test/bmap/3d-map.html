@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=vi4PmkD9VTUozB20xAEzbTeplG2UBDOR"></script>
+    <style>
+        body, html, #allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+        #allmap { position: relative; }
+        #tools { position: absolute; left: 0; top: 0; z-index: 1000; height: 100px;display: flex;flex-direction: column;justify-content: space-around;}
+        .tools-bar { display: flex; justify-content: space-around;}
+        .label { width: 80px; text-align: right; padding-right: 10px;}
+        .tools-bar:last-child button {width: 100px;}
+    </style>
+</head>
+<body>
+    <div id="allmap"></div>
+    <div id="tools">
+        <div class="tools-bar">
+            <div class="label">heading:</div>
+            <button id="heading-add">+</button>
+            <input type="text" id="heading" value="40">
+            <button id="heading-minus">-</button>
+        </div>
+        <div class="tools-bar">
+			<div class="label">tilt:</div>
+			<button id="tilt-add">+</button>
+			<input type="text" id="tilt" value="70">
+			<button id="tilt-minus">-</button>
+		</div>
+		<div class="tools-bar">
+			<button id="loop">loop</button>
+			<button id="stop">stop</button>
+		</div>
+    </div>
+    <script>
+        let map = new BMapGL.Map("allmap") // 创建Map实例
+        let point = new BMapGL.Point(116.280190, 40.049191)
+        map.centerAndZoom(point, 19) // 初始化地图，设置中心点坐标和地图缩放级别
+        map.enableScrollWheelZoom(true) // 开启鼠标滚缩放
+        map.setHeading(40) // 设置地图旋转角度
+        map.setTilt(70) // 设置地图倾斜角度
+
+        let heading = document.getElementById('heading')
+        let headingAdd = document.getElementById('heading-add')
+        let headingMinus = document.getElementById('heading-minus')
+        let tilt = document.getElementById('tilt')
+        let tiltAdd = document.getElementById('tilt-add')
+        let tiltMinus = document.getElementById('tilt-minus')
+        heading.addEventListener('input', (e) => {
+            map.setHeading(e.target.value)
+        })
+        tilt.addEventListener('input', (e) => {
+            map.setTilt(e.target.value)
+        })
+        headingAdd.addEventListener('click', () => {
+            heading.value++
+            map.setHeading(heading.value)
+        })
+        headingMinus.addEventListener('click', () => {
+            heading.value--
+            map.setHeading(heading.value)
+        })
+        tiltAdd.addEventListener('click', () => {
+            tilt.value++
+            map.setTilt(tilt.value)
+        })
+        tiltMinus.addEventListener('click', () => {
+            tilt.value--
+            map.setTilt(tilt.value)
+        })
+
+        let task
+        document.getElementById('loop').addEventListener('click', () => {
+            task = setInterval(() => {
+                if (loop) {
+                    heading.value++
+                    map.setHeading(heading.value)
+                }
+            }, 100)
+        })
+
+        document.getElementById('stop').addEventListener('click', () => {
+            task && clearInterval(task)
+        })
+    </script>
+</body>
+</html>

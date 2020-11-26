@@ -13,9 +13,9 @@
         const MAXSIZE_STR = '3MB'
         const upload = document.getElementById('upload')
 
-        function convertImageToBase64(file, callback) {
+        const convertImageToBase64 = (file, callback) => {
             let reader = new FileReader()
-            reader.addEventListener('load', function(e) {
+            reader.addEventListener('load', (e) => {
                 // console.log(e.target.result)
                 const base64Image = e.target.result
                 callback && callback(base64Image)
@@ -24,12 +24,12 @@
             reader.readAsDataURL(file)
         }
 
-        function compress(base64Image, callback) {
+        const compress = (base64Image, callback) => {
             let maxW = 1024
             let maxH = 1024
             const image = new Image()
 
-            image.addEventListener('load', function() {
+            image.addEventListener('load', () => {
                 let ratio // 图片的压缩比
                 let needCompress = false // 是否需要压缩
 
@@ -75,11 +75,11 @@
             document.body.appendChild(image)
         }
 
-        function uploadToServer(compressImage) {
+        const uploadToServer = (compressImage) => {
             console.log('upload to server...', compressImage)
         }
 
-        upload.addEventListener('change', function(e) {
+        upload.addEventListener('change', (e) => {
             console.log(e.target.files)
             const [file] = e.target.files
             if (!file) {

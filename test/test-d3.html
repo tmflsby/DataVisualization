@@ -16,23 +16,22 @@
         const body = d3.select('body')
         const p = body.selectAll('p')
 
-        function doDatum() {
+        const doDatum = () => {
             const str = 'Framework'
             p.datum(str)
-            p.text(function(d, i) {
-                return `${d}-${i}`
-            })
+            p.text((d, i) => `${d}-${i}`)
         }
-        function doData() {
+
+        const doData = () => {
             const dataset = ['Vue', 'React', 'Agular']
-            p.data(dataset).text(function(d, i) {
-                return `${d}-${i}`
-            })
+            p.data(dataset).text((d, i) => `${d}-${i}`)
         }
-        document.getElementById('datum').addEventListener('click', function() {
+
+        document.getElementById('datum').addEventListener('click', () => {
             doDatum()
         })
-        document.getElementById('data').addEventListener('click', function() {
+
+        document.getElementById('data').addEventListener('click', () => {
             doData()
         })
     </script>

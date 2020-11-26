@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=vi4PmkD9VTUozB20xAEzbTeplG2UBDOR"></script>
+    <script src="//mapv.baidu.com/gl/examples/static/common.js"></script>
+    <script src="//mapv.baidu.com/build/mapv.min.js"></script>
+    <script src="https://code.bdstatic.com/npm/mapvgl@1.0.0-beta.89/dist/mapvgl.min.js"></script>
+    <style>
+        html, body {width: 100%;height: 100%;margin: 0;padding: 0;}
+        #map_container {width: 100%;height: 100%;margin: 0;}
+    </style>
+</head>
+<body>
+    <div id="map_container"></div>
+    <script>
+        let map = initMap({
+            tilt: 0,
+            heading: 0,
+            center: [105.348145,37.976416],
+            zoom: 5,
+            style: purpleStyle
+        })
+
+        // 创建九段线
+        let pt = new BMapGL.Point(130.943495,22.781036)
+        let myIcon = new BMapGL.Icon('https://mapv.baidu.com/gl/examples/images/jiuduanxian.png', new BMapGL.Size(102, 150))
+        let marker = new BMapGL.Marker(pt, {icon: myIcon, enableDragging: true})  // 创建标注
+        map.addOverlay(marker)
+
+        const initData = () => {
+            fetch('https://mapv.baidu.com/gl/examples/data/chinalocation.json')
+                .then(rs => {return rs.json()})
+                .then(rs => {
+                    let data1 = []
+                    let data2 = []
+                    let data3 = []
+                    for (let i = 0; i < rs[0].length; i++) {
+                        let geoCoord = rs[0][i].geoCoord
+                        data1.push({
+                            geometry: {
+                                type: 'Point',
+                                coordinates: geoCoord
+                            },
+                            properties: {
+                                time: Math.random() * 100
+                            }
+                        })
+                    }
+
+                    for (let i = 0; i < rs[1].length; i++) {
+                        let geoCoord = rs[1][i].geoCoord
+                        data2.push({
+                            geometry: {
+                                type: 'Point',
+                                coordinates: geoCoord
+                            },
+                            properties: {
+                                time: Math.random() * 10
+                            }
+                        })
+                    }
+
+                    for (let i = 0; i < rs[2].length; i++) {
+                        let geoCoord = rs[2][i].geoCoord
+                        data3.push({
+                            geometry: {
+                                type: 'Point',
+                                coordinates: geoCoord
+                            },
+                            properties: {
+                                time: Math.random() * 10
+                            }
+                        })
+                    }
+
+                    setData({data1, data2, data3})
+                })
+        }
+
+        const setData = (data) => {
+            let view = new mapvgl.View({ map })
+
+            view.addLayer(new mapvgl.PointLayer({
+                blend: 'lighter',
+                shape: 'circle',
+                color: 'rgba(255, 77, 77, 0.8)', // 点图层1颜色
+                data: data.data1,
+                size: 1
+            }))
+
+            view.addLayer(new mapvgl.PointLayer({
+                blend: 'lighter',
+                shape: 'circle',
+                color: 'rgba(255, 204, 0, 0.6)', // 点图层2颜色
+                data: data.data2,
+                size: 1.5
+            }))
+
+            view.addLayer(new mapvgl.PointLayer({
+                blend: 'lighter',
+                shape: 'circle',
+                color: 'rgba(255, 255, 0, 0.6)', // 点图层3颜色
+                data: data.data3,
+                size: 2
+            }))
+
+            view.addLayer(new mapvgl.PointTripLayer({
+                blend: 'lighter',
+                shape: 'circle',
+                startTime: 0,
+                endTime: 100,
+                step: 0.1,
+                trailLength: 10,
+                color: 'rgba(255, 255, 153, 0.5)', // 点动画图层颜色
+                data: data.data1,
+                size: 1.5
+            }))
+        }
+
+        initData()
+    </script>
+</body>
+</html>
