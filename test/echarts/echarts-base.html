@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
+</head>
+<!-- 
+    1 引入 js 库
+    2 编写渲染容器 DOM，添加 width 和 height 样式属性
+    3 获取渲染 DOM 对象
+    4 初始化 ECharts 对象
+    5 编写 option 参数
+    6 调用 setOption 完成渲染
+ -->
+<body>
+    <div id="chart" style="width: 800px; height: 400px;"></div>
+    <script>
+        const chartDom = document.getElementById('chart')
+        const chart = echarts.init(chartDom)
+        chart.setOption({
+            title: {
+                text: '快速入门ECharts开发'
+            },
+            xAxis: {
+                data: ['食品', '数码', '服饰', '箱包']
+            },
+            yAxis: {},
+            series: {
+                type: 'bar',
+                data: [100, 120, 90, 150]
+            }
+        })
+    </script>
+</body>
+</html>
