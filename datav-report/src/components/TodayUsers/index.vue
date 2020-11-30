@@ -18,6 +18,7 @@ export default {
   methods: {
     getOptions() {
       return {
+        tooltip: {},
         xAxis: {
           type: 'category',
           data: [
