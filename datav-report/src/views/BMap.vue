@@ -26,8 +26,6 @@ export default {
       return res
     }
 
-    console.log(convertData(pointData))
-
     this.options = {
       bmap: {
         key: 'vi4PmkD9VTUozB20xAEzbTeplG2UBDOR',

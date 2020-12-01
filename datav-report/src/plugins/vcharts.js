@@ -1,4 +1,4 @@
 import Vue from 'vue'
-import VeLine from 'v-charts/lib/line.common'
+import VeBMap from 'v-charts/lib/bmap.common.min'
 
-Vue.component('VeLine', VeLine)
+Vue.component('VeBMap', VeBMap)
