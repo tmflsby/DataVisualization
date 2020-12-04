@@ -10,57 +10,42 @@
 
 <script>
 import 'echarts/extension/bmap/bmap'
-import { styleJson, pointData, geoCoordMap } from '@/style/bmapData'
+import commonDataMixin from '@/mixins/commonDataMixin'
+import styleJson from '@/style/mapStyle'
 export default {
   name: 'BMapScatter',
+  mixins: [commonDataMixin],
   data() {
     return {
-      chartSettings: {},
-      chartTitle: {},
+      chartSettings: {
+        key: 'vi4PmkD9VTUozB20xAEzbTeplG2UBDOR',
+        v: '3.0',
+        bmap: {
+          center: [104.114129, 37.550339],
+          zoom: 5,
+          roam: true,
+          mapStyleV2: {
+            styleJson
+          }
+        }
+      },
+      chartTitle: {
+        text: 'PM2.5数据大盘',
+        subtext: '环境指数统计',
+        textLink: 'https://www.imooc.com',
+        left: 'center'
+      },
       chartSeries: [],
       chartTooltip: {}
     }
   },
   mounted() {
-    const convertData = (pointData) => {
-      const res = []
-      pointData.forEach(item => {
-        const { name, value } = item
-        const coord = geoCoordMap[name]
-        res.push({
-          name,
-          value: [...coord, value]
-        })
-      })
-      return res
-    }
-
-    this.chartSettings = {
-      key: 'vi4PmkD9VTUozB20xAEzbTeplG2UBDOR',
-      v: '3.0',
-      bmap: {
-        center: [104.114129, 37.550339],
-        zoom: 5,
-        roam: true,
-        mapStyleV2: {
-          styleJson
-        }
-      }
-    }
-
-    this.chartTitle = {
-      text: '慕课外卖销售数据大盘',
-      subtext: '销售趋势统计',
-      textLink: 'https://www.imooc.com',
-      left: 'center'
-    }
-
     this.chartSeries = [
       {
         name: 'pm2.5',
         type: 'scatter',
         coordinateSystem: 'bmap',
-        data: convertData(pointData),
+        data: this.convertData(this.pointData),
         encode: {
           value: 2
         },
@@ -83,7 +68,7 @@ export default {
         name: 'Top 5',
         type: 'effectScatter',
         coordinateSystem: 'bmap',
-        data: convertData(pointData.sort((a, b) => b.value - a.value).slice(0, 5)),
+        data: this.convertData(this.pointData.sort((a, b) => b.value - a.value).slice(0, 5)),
         encode: {
           value: 2
         },
@@ -104,6 +89,20 @@ export default {
         }
       }
     ]
+  },
+  methods: {
+    convertData(pointData) {
+      const res = []
+      pointData.forEach(item => {
+        const { name, value } = item
+        const coord = this.geoCoordMap[name]
+        res.push({
+          name,
+          value: [...coord, value]
+        })
+      })
+      return res
+    }
   }
 }
 </script>

@@ -1,15 +1,15 @@
 <template>
-  <CommonCard title="累计用户数" value="1,081,165">
+  <CommonCard title="累计用户数" :value="userToday">
     <template>
       <VueECharts :options="getOptions()"/>
     </template>
     <template v-slot:footer>
       <div class="total-user-footer">
         <span>日同比 </span>
-        <span class="emphasis">8.14%</span>
+        <span class="emphasis">{{ userGrowthLastDay }}</span>
         <div class="increase"></div>
         <span class="month">月同比 </span>
-        <span class="emphasis">35.91%</span>
+        <span class="emphasis">{{ userGrowthLastMonth }}</span>
         <div class="decrease"></div>
       </div>
     </template>
@@ -18,9 +18,10 @@
 
 <script>
 import commonCardMixin from '@/mixins/commonCardMixin'
+import commonDataMixin from '@/mixins/commonDataMixin'
 export default {
   name: 'TotalUsers',
-  mixins: [commonCardMixin],
+  mixins: [commonCardMixin, commonDataMixin],
   methods: {
     getOptions() {
       return {
@@ -34,8 +35,9 @@ export default {
         },
         series: [
           {
+            name: '上月平台用户数',
             type: 'bar',
-            data: [150],
+            data: [this.userLastMonth],
             stack: '总量',
             barWidth: 10,
             itemStyle: {
@@ -43,8 +45,9 @@ export default {
             }
           },
           {
+            name: '今日平台用户数',
             type: 'bar',
-            data: [250],
+            data: [this.userTodayNumber],
             stack: '总量',
             itemStyle: {
               color: '#eee'
@@ -52,7 +55,7 @@ export default {
           },
           {
             type: 'custom',
-            data: [150],
+            data: [this.userLastMonth],
             stack: '总量',
             renderItem: (params, api) => {
               const value = api.value(0)

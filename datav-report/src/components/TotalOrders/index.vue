@@ -1,20 +1,21 @@
 <template>
-  <CommonCard title="累计订单量" value="2，157，420">
+  <CommonCard title="累计订单量" :value="orderToday">
     <template>
       <VueECharts :options="getOptions()"/>
     </template>
     <template v-slot:footer>
       <span>昨日订单量 </span>
-      <span class="emphasis">2,000,000</span>
+      <span class="emphasis">{{ orderLastDay }}</span>
     </template>
   </CommonCard>
 </template>
 
 <script>
 import commonCardMixin from '@/mixins/commonCardMixin'
+import commonDataMixin from '@/mixins/commonDataMixin'
 export default {
   name: 'TotalOrders',
-  mixins: [commonCardMixin],
+  mixins: [commonCardMixin, commonDataMixin],
   methods: {
     getOptions() {
       return {
@@ -28,7 +29,7 @@ export default {
         },
         series: [{
           type: 'line',
-          data: [620, 432, 220, 634, 790, 430, 220, 320, 532, 320, 834, 690, 530, 220, 620],
+          data: this.orderTrend,
           areaStyle: {
             color: 'purple'
           },

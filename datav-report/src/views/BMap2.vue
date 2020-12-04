@@ -10,7 +10,7 @@
 
 <script>
 import 'echarts/extension/bmap/bmap'
-import { styleJson, pointData, geoCoordMap } from '@/style/bmapData'
+import { styleJson, pointData, geoCoordMap } from '@/style/mapStyle'
 export default {
   name: 'BMap2',
   data() {

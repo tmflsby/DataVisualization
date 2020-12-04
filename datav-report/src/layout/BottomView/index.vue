@@ -10,25 +10,26 @@
             <div class="chart-inner">
               <div class="chart">
                 <div class="chart-title">搜索用户</div>
-                <div class="chart-data">93,634</div>
+                <div class="chart-data">{{userCount | format}}</div>
                 <VueECharts :options="searchUserOption"/>
               </div>
               <div class="chart">
                 <div class="chart-title">搜索量</div>
-                <div class="chart-data">198,634</div>
-                <VueECharts :options="searchUserOption"/>
+                <div class="chart-data">{{searchCount | format}}</div>
+                <VueECharts :options="searchNumberOption"/>
               </div>
             </div>
             <div class="table-wrapper">
               <el-table :data="tableData">
-                <el-table-column prop="rank" label="排名" width="180"/>
-                <el-table-column prop="keyword" label="关键词" width="180"/>
+                <el-table-column prop="rank" label="排名"/>
+                <el-table-column prop="keyword" label="关键词"/>
                 <el-table-column prop="count" label="总搜索量"/>
                 <el-table-column prop="users" label="搜索用户数"/>
+                <el-table-column prop="range" label="搜索占比"/>
               </el-table>
               <el-pagination
                 layout="prev, pager, next"
-                :total="100" :page-size="4"
+                :total="total" :page-size="pageSize"
                 background @current-change="onPageChange"
               />
             </div>
@@ -42,7 +43,7 @@
           <div class="title-wrapper">
             <div class="title">分类销售排行</div>
             <div class="radio-wrapper">
-              <el-radio-group v-model="radioSelect" size="small">
+              <el-radio-group v-model="radioSelect" size="small" @change="onPieCharChange">
                 <el-radio-button label="品类"/>
                 <el-radio-button label="商品"/>
               </el-radio-group>
@@ -60,48 +61,43 @@
 </template>
 
 <script>
+import commonDataMixin from '@/mixins/commonDataMixin'
 export default {
   name: 'BottomView',
+  mixins: [commonDataMixin],
   data() {
     return {
-      searchUserOption: {
-        xAxis: {
-          type: 'category',
-          boundaryGap: false
-        },
-        yAxis: {
-          show: false
-        },
-        series: [{
-          type: 'line',
-          data: [100, 150, 324, 324, 435, 134, 414, 234, 123, 624],
-          areaStyle: {
-            color: 'rgba(95, 187, 255, .5)'
-          },
-          lineStyle: {
-            color: 'rgb(95, 187, 255)'
-          },
-          itemStyle: {
-            opacity: 0
-          },
-          smooth: true
-        }],
-        grid: {
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0
-        }
-      },
+      searchUserOption: {},
       searchNumberOption: {},
-      tableData: [
-        { id: 1, rank: 1, keyword: '武汉', count: 100, users: 90, range: '90%' },
-        { id: 2, rank: 2, keyword: '武汉', count: 100, users: 90, range: '90%' },
-        { id: 3, rank: 3, keyword: '武汉', count: 100, users: 90, range: '90%' },
-        { id: 4, rank: 4, keyword: '武汉', count: 100, users: 90, range: '90%' }
-      ],
+      tableData: [],
+      totalData: [],
+      total: 0,
+      pageSize: 4,
+      userCount: 0,
+      searchCount: 0,
       radioSelect: '品类',
       categoryOptions: {}
+    }
+  },
+  watch: {
+    wordCloud() {
+      const totalData = []
+      this.wordCloud.forEach((item, index) => {
+        totalData.push({
+          id: index + 1,
+          rank: index + 1,
+          keyword: item.word,
+          count: item.count,
+          users: item.user,
+          range: `${((item.user / item.count) * 100).toFixed(2)}%`
+        })
+      })
+      this.totalData = totalData
+      this.total = this.totalData.length
+      this.renderTable(1)
+      this.userCount = totalData.reduce((s, i) => i.users + s, 0)
+      this.searchCount = totalData.reduce((s, i) => i.count + s, 0)
+      this.renderLineChart()
     }
   },
   mounted() {
@@ -109,42 +105,17 @@ export default {
   },
   methods: {
     onPageChange(page) {
-      console.log(page)
+      this.renderTable(page)
     },
-    renderPieChar() {
-      const mockData = [
-        {
-          legendName: '粉面粥店',
-          value: 67,
-          percent: '15.40',
-          itemStyle: {
-            color: '#e7e702'
-          },
-          name: '粉面粥店 | 15.40%'
-        },
-        {
-          legendName: '简餐便当',
-          value: 97,
-          percent: '22.3',
-          itemStyle: {
-            color: '#8d7fec'
-          },
-          name: '简餐便当 | 22.30%'
-        },
-        {
-          legendName: '汉堡披萨',
-          value: 92,
-          percent: '21.1',
-          itemStyle: {
-            color: '#5085f2'
-          },
-          name: '汉堡披萨 | 21.15%'
-        }
-      ]
+    onPieCharChange(type) {
+      this.radioSelect = type
+      this.renderPieChar()
+    },
+    createPieCharOptions(data, axis, total) {
       this.categoryOptions = {
         title: [
           {
-            text: '品类分类',
+            text: `${this.radioSelect}分类`,
             textStyle: {
               fontSize: 14,
               color: '#666'
@@ -154,7 +125,7 @@ export default {
           },
           {
             text: '累计订单量',
-            subtext: '320',
+            subtext: total,
             x: '34.5%',
             y: '42.5%',
             textAlign: 'center',
@@ -170,7 +141,7 @@ export default {
         ],
         series: [{
           type: 'pie',
-          data: mockData,
+          data,
           label: {
             normal: {
               show: true,
@@ -206,13 +177,90 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: (params) => (
-            params.seriesName + '<br>' +
             params.marker + params.data.legendName + '<br>' +
             '数量：' + params.data.value + '<br>' +
             '占比：' + params.data.percent + '%'
           )
         }
       }
+    },
+    renderPieChar() {
+      const color = ['#8d7fec', '#5085f2', '#f8726b', '#e7e702', '#78f283', '#4bc1fc']
+      const data = []
+      const axis = []
+      let total = 0
+
+      if (this.radioSelect === '品类') {
+        total = this.category.reduce((s, i) => i.value + s, 0)
+        this.category.forEach((item, index) => {
+          item.itemStyle = {
+            color: color[index]
+          }
+          item.percent = ((item.value / total) * 100).toFixed(2)
+          item.name = `${item.legendName} | ${item.percent}%`
+          data.push(item)
+          axis.push(item.legendName)
+        })
+        this.createPieCharOptions(data, axis, total)
+      } else {
+        total = this.commodity.reduce((s, i) => i.value + s, 0)
+        this.commodity.forEach((item, index) => {
+          item.itemStyle = {
+            color: color[index]
+          }
+          item.percent = ((item.value / total) * 100).toFixed(2)
+          item.name = `${item.legendName} | ${item.percent}%`
+          data.push(item)
+          axis.push(item.legendName)
+        })
+        this.createPieCharOptions(data, axis, total)
+      }
+    },
+    renderTable(page) {
+      this.tableData = this.totalData.slice(
+        (page - 1) * this.pageSize,
+        (page - 1) * this.pageSize + this.pageSize
+      )
+    },
+    createOption(key) {
+      const data = []
+      const axis = []
+      this.wordCloud.forEach(item => data.push(item[key]))
+      this.wordCloud.forEach(item => axis.push(item.word))
+      return {
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: axis
+        },
+        yAxis: {
+          show: false
+        },
+        series: [{
+          type: 'line',
+          data,
+          areaStyle: {
+            color: 'rgba(95, 187, 255, .5)'
+          },
+          lineStyle: {
+            color: 'rgb(95, 187, 255)'
+          },
+          itemStyle: {
+            opacity: 0
+          },
+          smooth: true
+        }],
+        grid: {
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0
+        }
+      }
+    },
+    renderLineChart() {
+      this.searchUserOption = this.createOption('user')
+      this.searchNumberOption = this.createOption('count')
     }
   }
 }

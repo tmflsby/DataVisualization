@@ -3,24 +3,30 @@
 </template>
 
 <script>
+import commonDataMixin from '@/mixins/commonDataMixin'
 export default {
   name: 'LiquidFill',
+  mixins: [commonDataMixin],
   data() {
     return {
-      chartData: {
-        columns: ['title', 'percent'],
-        rows: [{
-          title: 'rate',
-          percent: 0.23455
-        }]
-      },
+      chartData: {},
       chartSettings: {}
     }
   },
+  watch: {
+
+  },
   mounted() {
+    this.chartData = {
+      columns: ['title', 'percent'],
+      rows: [{
+        title: '用户月同比增长',
+        percent: Number.parseInt(this.userGrowthLastMonth) / 50
+      }]
+    }
     this.chartSettings = {
       seriesMap: {
-        rate: {
+        用户月同比增长: {
           radius: '80%',
           label: {
             formatter: (v) => `${Math.floor(v.data.value * 100)}%`,

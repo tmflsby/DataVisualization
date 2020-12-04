@@ -3,22 +3,22 @@
 </template>
 
 <script>
+import commonDataMixin from '@/mixins/commonDataMixin'
 export default {
   name: 'WordCloud',
+  mixins: [commonDataMixin],
   data() {
     return {
-      chartData: {
-        columns: ['name', 'value'],
-        rows: [
-          { name: '慕课网', value: 200 },
-          { name: '数据可视化', value: 150 },
-          { name: '帅洋', value: 500 },
-          { name: 'WordCloud', value: 300 }
-        ]
-      },
+      chartData: {},
       chartSettings: {
-        color: ['rgba(97, 216, 0, .7)', 'rgba(204, 178, 26, .7)', 'rgba(245, 166, 35, .7)', 'rgba(156, 13, 113, .7)']
+        color: ['#8d7fec', '#5085f2', '#f8726b', '#e7e702', '#78f283', '#4bc1fc']
       }
+    }
+  },
+  mounted() {
+    this.chartData = {
+      columns: ['name', 'value'],
+      rows: this.wordCloudChartData
     }
   }
 }
