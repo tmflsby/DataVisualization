@@ -4,7 +4,8 @@
 
 <script>
 import 'echarts/extension/bmap/bmap'
-import { styleJson, pointData, geoCoordMap } from '@/style/mapStyle'
+import styleJson from '@/style/mapStyle'
+import { mockGeoCoordMap, mockPointData } from '@/api/mockData'
 export default {
   name: 'BMap',
   data() {
@@ -17,7 +18,7 @@ export default {
       const res = []
       pointData.forEach(item => {
         const { name, value } = item
-        const coord = geoCoordMap[name]
+        const coord = mockGeoCoordMap[name]
         res.push({
           name,
           value: [...coord, value]
@@ -47,7 +48,7 @@ export default {
           name: 'pm2.5',
           type: 'scatter',
           coordinateSystem: 'bmap',
-          data: convertData(pointData),
+          data: convertData(mockPointData),
           encode: {
             value: 2
           },
@@ -70,7 +71,7 @@ export default {
           name: 'Top 5',
           type: 'effectScatter',
           coordinateSystem: 'bmap',
-          data: convertData(pointData.sort((a, b) => b.value - a.value).slice(0, 5)),
+          data: convertData(mockPointData.sort((a, b) => b.value - a.value).slice(0, 5)),
           encode: {
             value: 2
           },
