@@ -1,5 +1,9 @@
 import Vue from 'vue'
 
+import ECharts from 'echarts'
+import VueECharts from 'vue-echarts'
+import './plugins/vcharts'
+
 import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
@@ -44,6 +48,9 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.config.productionTip = false
+
+Vue.prototype.$echarts = ECharts
+Vue.component('VueECharts', VueECharts)
 
 new Vue({
   el: '#app',
