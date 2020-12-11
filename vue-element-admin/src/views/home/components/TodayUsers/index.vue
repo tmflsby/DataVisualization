@@ -1,7 +1,7 @@
 <template>
   <CommonCard title="今日交易用户数" :value="orderUser">
     <template>
-      <VueECharts :options="getOptions()" />
+      <VueECharts :options="getOptions()"/>
     </template>
     <template v-slot:footer>
       <span>退货率 </span>
@@ -22,7 +22,7 @@ export default {
         tooltip: {},
         xAxis: {
           type: 'category',
-          data: this.orderUserTrend,
+          data: this.orderUserTrendAxis,
           show: false
         },
         yAxis: {
@@ -31,7 +31,7 @@ export default {
         series: [{
           name: '用户实时交易量',
           type: 'bar',
-          data: this.orderUserTrendAxis,
+          data: this.orderUserTrend,
           barWidth: '60%'
         }],
         grid: {

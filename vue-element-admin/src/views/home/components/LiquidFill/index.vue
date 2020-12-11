@@ -1,5 +1,5 @@
 <template>
-  <VeLiquidFill :data="chartData" :settings="chartSettings" height="100%" />
+  <VeLiquidFill :data="chartData" :settings="chartSettings" height="100%"/>
 </template>
 
 <script>
@@ -14,49 +14,48 @@ export default {
     }
   },
   watch: {
-
-  },
-  mounted() {
-    this.chartData = {
-      columns: ['title', 'percent'],
-      rows: [{
-        title: '用户月同比增长',
-        percent: Number.parseInt(this.userGrowthLastMonth) / 50
-      }]
-    }
-    this.chartSettings = {
-      seriesMap: {
-        用户月同比增长: {
-          radius: '80%',
-          label: {
-            formatter: (v) => `${Math.floor(v.data.value * 100)}%`,
-            textStyle: {
-              fontSize: 36,
-              color: '#999',
-              fontWeight: 'normal'
+    userGrowthLastMonth() {
+      this.chartData = {
+        columns: ['title', 'percent'],
+        rows: [{
+          title: '用户月同比增长',
+          percent: this.userGrowthLastMonth / 100
+        }]
+      }
+      this.chartSettings = {
+        seriesMap: {
+          用户月同比增长: {
+            radius: '80%',
+            label: {
+              formatter: (v) => `${(v.data.value * 100).toFixed(2)}%`,
+              textStyle: {
+                fontSize: 36,
+                color: '#999',
+                fontWeight: 'normal'
+              },
+              position: ['50%', '50%'],
+              insideColor: '#fff'
             },
-            position: ['50%', '50%'],
-            insideColor: '#fff'
-          },
-          outline: {
+            outline: {
+              itemStyle: {
+                borderColor: '#aaa4a4',
+                borderWidth: 1,
+                color: 'none',
+                shadowBlur: 0,
+                shadowColor: '#fff'
+              },
+              borderDistance: 0
+            },
+            backgroundStyle: {
+              color: '#fff'
+            },
             itemStyle: {
-              borderColor: '#aaa4a4',
-              borderWidth: 1,
-              color: 'none',
               shadowBlur: 0,
               shadowColor: '#fff'
             },
-            borderDistance: 0
-          },
-          backgroundStyle: {
-            color: '#fff'
-          },
-          itemStyle: {
-            shadowBlur: 0,
-            shadowColor: '#fff'
-          },
-          amplitude: 10,
-          color: [this.getColor(this.chartData.rows[0].percent)]
+            amplitude: 8,
+            color: [this.getColor(this.chartData.rows[0].percent)]
+          }
         }
       }
     }

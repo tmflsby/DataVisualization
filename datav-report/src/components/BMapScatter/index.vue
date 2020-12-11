@@ -30,72 +30,75 @@ export default {
         }
       },
       chartTitle: {
-        text: 'PM2.5数据大盘',
-        subtext: '环境指数统计',
-        textLink: 'https://www.imooc.com',
+        text: '慕课外卖销售数据大盘',
+        subtext: '销售趋势统计',
+        sublink: 'https://www.imooc.com',
         left: 'center'
       },
       chartSeries: [],
       chartTooltip: {}
     }
   },
-  mounted() {
-    this.chartSeries = [
-      {
-        name: 'pm2.5',
-        type: 'scatter',
-        coordinateSystem: 'bmap',
-        data: this.convertData(this.pointData),
-        encode: {
-          value: 2
-        },
-        symbolSize: (val) => val[2] / 10,
-        itemStyle: {
-          color: 'purple'
-        },
-        label: {
-          show: false,
-          position: 'right',
-          formatter: (v) => `${v.data.name} - ${v.data.value[2]}`
-        },
-        emphasis: {
+  watch: {
+    mapData() {
+      const { data, geo } = this.mapData
+      this.chartSeries = [
+        {
+          name: 'pm2.5',
+          type: 'scatter',
+          coordinateSystem: 'bmap',
+          data: this.convertData(data, geo),
+          encode: {
+            value: 2
+          },
+          symbolSize: (val) => val[2] / 10,
+          itemStyle: {
+            color: 'purple'
+          },
           label: {
-            show: true
+            show: false,
+            position: 'right',
+            formatter: (v) => `${v.data.name} - ${v.data.value[2]}`
+          },
+          emphasis: {
+            label: {
+              show: true
+            }
+          }
+        },
+        {
+          name: 'Top 5',
+          type: 'effectScatter',
+          coordinateSystem: 'bmap',
+          data: this.convertData(data.sort((a, b) => b.value - a.value), geo).slice(0, 10),
+          encode: {
+            value: 2
+          },
+          symbolSize: (val) => val[2] / 10,
+          itemStyle: {
+            color: 'purple',
+            shadowBlur: 10,
+            shadowColor: '#333'
+          },
+          label: {
+            show: true,
+            position: 'right',
+            formatter: (v) => `${v.data.name} - ${v.data.value[2]}`
+          },
+          hoverAnimation: true,
+          rippleEffect: {
+            brushType: 'stroke'
           }
         }
-      },
-      {
-        name: 'Top 5',
-        type: 'effectScatter',
-        coordinateSystem: 'bmap',
-        data: this.convertData(this.pointData.sort((a, b) => b.value - a.value).slice(0, 5)),
-        encode: {
-          value: 2
-        },
-        symbolSize: (val) => val[2] / 10,
-        itemStyle: {
-          color: 'purple',
-          shadowBlur: 10,
-          shadowColor: '#333'
-        },
-        label: {
-          show: true,
-          position: 'right',
-          formatter: (v) => `${v.data.name} - ${v.data.value[2]}`
-        },
-        hoverAnimation: true,
-        rippleEffect: {
-          brushType: 'stroke'
-        }
-      }
-    ]
+      ]
+    }
   },
   methods: {
-    convertData(pointData) {
+    convertData(data, geo) {
       const res = []
-      pointData.forEach(item => {
+      data.forEach(item => {
         const { name, value } = item
-        const coord = this.geoCoordMap[name]
+        const coord = geo[name]
         res.push({
           name,
           value: [...coord, value]

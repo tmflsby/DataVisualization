@@ -1,5 +1,5 @@
 <template>
-  <VeWordCloud :data="chartData" :settings="chartSettings" height="100%" />
+  <VeWordCloud :data="chartData" :settings="chartSettings" height="100%"/>
 </template>
 
 <script>
@@ -15,10 +15,19 @@ export default {
       }
     }
   },
-  mounted() {
-    this.chartData = {
-      columns: ['name', 'value'],
-      rows: this.wordCloudChartData
+  watch: {
+    wordCloud() {
+      const data = []
+      this.wordCloud.forEach(item => {
+        data.push({
+          name: item.word,
+          value: item.count
+        })
+      })
+      this.chartData = {
+        columns: ['name', 'value'],
+        rows: data
+      }
     }
   }
 }

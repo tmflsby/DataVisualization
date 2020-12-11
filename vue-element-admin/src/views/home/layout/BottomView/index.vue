@@ -10,29 +10,27 @@
             <div class="chart-inner">
               <div class="chart">
                 <div class="chart-title">搜索用户</div>
-                <div class="chart-data">{{ userCount | format }}</div>
-                <VueECharts :options="searchUserOption" />
+                <div class="chart-data">{{userCount | format}}</div>
+                <VueECharts :options="searchUserOption"/>
               </div>
               <div class="chart">
                 <div class="chart-title">搜索量</div>
-                <div class="chart-data">{{ searchCount | format }}</div>
-                <VueECharts :options="searchNumberOption" />
+                <div class="chart-data">{{searchCount | format}}</div>
+                <VueECharts :options="searchNumberOption"/>
               </div>
             </div>
             <div class="table-wrapper">
               <el-table :data="tableData">
-                <el-table-column prop="rank" label="排名" />
-                <el-table-column prop="keyword" label="关键词" />
-                <el-table-column prop="count" label="总搜索量" />
-                <el-table-column prop="users" label="搜索用户数" />
-                <el-table-column prop="range" label="搜索占比" />
+                <el-table-column prop="rank" label="排名"/>
+                <el-table-column prop="keyword" label="关键词"/>
+                <el-table-column prop="count" label="总搜索量"/>
+                <el-table-column prop="users" label="搜索用户数"/>
+                <el-table-column prop="range" label="搜索占比"/>
               </el-table>
               <el-pagination
                 layout="prev, pager, next"
-                :total="total"
-                :page-size="pageSize"
-                background
-                @current-change="onPageChange"
+                :total="total" :page-size="pageSize"
+                background @current-change="onPageChange"
               />
             </div>
           </div>
@@ -46,15 +44,15 @@
             <div class="title">分类销售排行</div>
             <div class="radio-wrapper">
               <el-radio-group v-model="radioSelect" size="small" @change="onPieCharChange">
-                <el-radio-button label="品类" />
-                <el-radio-button label="商品" />
+                <el-radio-button label="品类"/>
+                <el-radio-button label="商品"/>
               </el-radio-group>
             </div>
           </div>
         </template>
         <template>
           <div class="chart-wrapper">
-            <VueECharts :options="categoryOptions" />
+            <VueECharts :options="categoryOptions"/>
           </div>
         </template>
       </el-card>
@@ -100,20 +98,39 @@ export default {
       this.userCount = totalData.reduce((s, i) => i.users + s, 0)
       this.searchCount = totalData.reduce((s, i) => i.count + s, 0)
       this.renderLineChart()
+    },
+    category1() {
+      this.renderPieChart()
     }
   },
   mounted() {
-    this.renderPieChar()
+    this.renderPieChart()
   },
   methods: {
+    onPieCharChange(type) {
+      this.radioSelect = type
+      this.renderPieChart()
+    },
     onPageChange(page) {
       this.renderTable(page)
     },
-    onPieCharChange(type) {
-      this.radioSelect = type
-      this.renderPieChar()
-    },
     createPieCharOptions(data, axis, total) {
+      const colors = ['#8d7fec', '#5085f2', '#f8726b', '#e7e702', '#78f283', '#4bc1fc']
+      const chartData = []
+
+      data.forEach((item, index) => {
+        const percent = `${(item / total * 100).toFixed(2)}%`
+        chartData.push({
+          legendname: axis[index],
+          value: item,
+          percent,
+          itemStyle: {
+            color: colors[index]
+          },
+          name: `${axis[index]} | ${percent}`
+        })
+      })
+
       this.categoryOptions = {
         title: [
           {
@@ -142,8 +159,9 @@ export default {
           }
         ],
         series: [{
+          name: '品类分布',
           type: 'pie',
-          data,
+          data: chartData,
           label: {
             normal: {
               show: true,
@@ -179,44 +197,32 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: (params) => (
-            params.marker + params.data.legendName + '<br>' +
+            params.seriesName + '<br />' +
+            params.marker + params.data.legendname + '<br>' +
             '数量：' + params.data.value + '<br>' +
             '占比：' + params.data.percent + '%'
           )
         }
       }
     },
-    renderPieChar() {
-      const color = ['#8d7fec', '#5085f2', '#f8726b', '#e7e702', '#78f283', '#4bc1fc']
-      const data = []
-      const axis = []
-      let total = 0
-
-      if (this.radioSelect === '品类') {
-        total = this.category.reduce((s, i) => i.value + s, 0)
-        this.category.forEach((item, index) => {
-          item.itemStyle = {
-            color: color[index]
-          }
-          item.percent = ((item.value / total) * 100).toFixed(2)
-          item.name = `${item.legendName} | ${item.percent}%`
-          data.push(item)
-          axis.push(item.legendName)
-        })
-        this.createPieCharOptions(data, axis, total)
-      } else {
-        total = this.commodity.reduce((s, i) => i.value + s, 0)
-        this.commodity.forEach((item, index) => {
-          item.itemStyle = {
-            color: color[index]
-          }
-          item.percent = ((item.value / total) * 100).toFixed(2)
-          item.name = `${item.legendName} | ${item.percent}%`
-          data.push(item)
-          axis.push(item.legendName)
-        })
-        this.createPieCharOptions(data, axis, total)
+    renderPieChart() {
+      console.log(this.category1)
+      if (!this.category1.data1 || !this.category2.data1) {
+        return
       }
+      let data
+      let axis
+      let total
+      if (this.radioSelect === '品类') {
+        data = this.category1.data1.slice(0, 6)
+        axis = this.category1.axisX.slice(0, 6)
+        total = data.reduce((s, i) => s + i, 0)
+      } else {
+        data = this.category2.data1.slice(0, 6)
+        axis = this.category2.axisX.slice(0, 6)
+        total = data.reduce((s, i) => s + i, 0)
+      }
+      this.createPieCharOptions(data, axis, total)
     },
     renderTable(page) {
       this.tableData = this.totalData.slice(
@@ -238,6 +244,7 @@ export default {
         yAxis: {
           show: false
         },
+        tooltip: {},
         series: [{
           type: 'line',
           data,

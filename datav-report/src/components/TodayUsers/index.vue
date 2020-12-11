@@ -22,7 +22,7 @@ export default {
         tooltip: {},
         xAxis: {
           type: 'category',
-          data: this.orderUserTrend,
+          data: this.orderUserTrendAxis,
           show: false
         },
         yAxis: {
@@ -31,7 +31,7 @@ export default {
         series: [{
           name: '用户实时交易量',
           type: 'bar',
-          data: this.orderUserTrendAxis,
+          data: this.orderUserTrend,
           barWidth: '60%'
         }],
         grid: {

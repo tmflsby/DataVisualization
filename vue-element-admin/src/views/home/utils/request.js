@@ -1,9 +1,15 @@
 import axios from 'axios'
 
 const service = axios.create({
-  baseURL: 'https://apis.imooc.com',
+  baseURL: 'https://book.youbaobao.xyz:18082',
   timeout: 5000
 })
+
+// service.interceptors.request.use(config => {
+//   config.params = {}
+//   config.params.icode = '13926EAFCAA16CC3'
+//   return config
+// })
 
 service.interceptors.response.use(
   response => {

@@ -20,12 +20,12 @@ export const mockOrderUser = Number.parseInt(String(Math.random() * 1000000))
 
 export const mockReturnRate = (Math.random() * 10).toFixed(2)
 
-export const nockOrderUserTrend = [
+export const mockOrderUserTrendAxis = [
   '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00',
   '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00'
 ]
 
-export const mockOrderUserTrendAxis = []
+export const mockOrderUserTrend = []
 for (let i = 0; i < 14; i++) {
   const orderUserTrendAxisItem = Number.parseInt(String(Math.random() * 1000))
   mockOrderUserTrendAxis.push(orderUserTrendAxisItem)
