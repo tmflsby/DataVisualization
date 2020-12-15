@@ -2,10 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>datav libs example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.0.0-beta.15/dist/vue.global.js"></script>
   <script src="../dist/datav.js"></script>
 </head>
 <body>
-
+  <div id="app">
+<!--    <svg-animation></svg-animation>-->
+<!--    <imooc-loading width="100" height="100" duration="1" inside-color="yellowgreen" outside-color="greenyellow">-->
+<!--      数据大屏加载中...-->
+<!--    </imooc-loading>-->
+<!--    <imooc-fly-box>-->
+<!--      <div>123</div>-->
+<!--      <div>123</div>-->
+<!--      <div>123</div>-->
+<!--    </imooc-fly-box>-->
+  </div>
+  <script>
+    Vue.createApp({
+      setup() {
+        var msg = '模板'
+        return {
+          msg
+        }
+      }
+    }).use(datav).mount('#app')
+  </script>
 </body>
 </html>
