@@ -24,7 +24,7 @@
   </svg>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 import { computed, ref } from 'vue'
 export default {
   name: 'TestComponent',

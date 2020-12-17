@@ -1,55 +1,64 @@
-import { ref, computed, watch, onMounted, getCurrentInstance } from 'vue'
+import {
+  ref,
+  reactive,
+  computed,
+  watch,
+  onMounted,
+  getCurrentInstance
+} from 'vue'
 
-export default function useTest () {
-  const count = ref(1)
+export default function useTest() {
+  const state = reactive({
+    count: 1
+  })
+
+  const { ctx } = getCurrentInstance() // 获取组件实例
+
+  const refNum = ref(2)
+
+  const doubleCount = computed(() => state.count * 2)
+
+  const number = computed(() => ctx.$store.state.number)
+
+  const a = computed(() => ctx.$store.getters.aaValue)
 
   const increment = () => {
-    count.value++
+    state.count++
   }
 
-  const doubleCount = computed(() => count.value * 2)
-
-  console.log(getCurrentInstance())
-  const { ctx } = getCurrentInstance()
-  console.log(ctx.$router.currentRoute.value)
   const gotoAbout = () => {
     ctx.$router.push('/about')
   }
 
-  const number = computed(() => ctx.$store.state.number)
-
-  const updateNumber = () => {
-    // ctx.$store.commit('SET_NUMBER', count.value * 100)
-    ctx.$store.dispatch('setNumber', count.value * 100)
+  const updateNum = () => {
+    // ctx.$store.commit('SET_NUMBER', refNum.value * 100)
+    ctx.$store.dispatch('setNumber', refNum.value * 200)
   }
 
-  // const aa = computed(() => ctx.$store.state.a.aa)
-  const aa = computed(() => ctx.$store.getters.aaValue)
-
-  const updateAA = () => {
-    ctx.$store.commit('SET_AA', aa.value + 1)
+  const updateA = () => {
+    ctx.$store.commit('SET_AA', ctx.$store.state.a.aa + 1)
   }
 
-  // const bb = computed(() => ctx.$store.state.b.bb)
-  const bb = computed(() => ctx.$store.getters.bbValue)
-
-  watch(() => count.value, () => {
-    console.log('state count changed:' + count.value)
-  })
+  watch(
+    () => state.count,
+    () => {
+      console.log('变化')
+    }
+  )
 
   onMounted(() => {
-    console.log('onMounted...')
+    console.log('生命周期', refNum, ctx.$router, ctx)
   })
 
   return {
-    count,
+    state,
     doubleCount,
-    number,
-    aa,
-    bb,
     increment,
     gotoAbout,
-    updateNumber,
-    updateAA
+    updateNum,
+    refNum,
+    number,
+    a,
+    updateA
   }
 }

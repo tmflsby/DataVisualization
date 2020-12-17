@@ -58,7 +58,7 @@
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 import { watch, ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import useScreen from '../../hooks/useScreen'
@@ -108,7 +108,6 @@ const defaultConfig = {
 
 export default {
   name: 'BaseScrollList',
-
   props: {
     config: {
       type: Object,
@@ -117,7 +116,6 @@ export default {
       }
     }
   },
-
   setup(props) {
     const id = `base-scroll-list-${uuidv4()}`
     const { width, height } = useScreen(id)
@@ -134,8 +132,8 @@ export default {
     const rowNum = ref(defaultConfig.rowNum)
     const aligns = ref([])
     const isAnimationStart = ref(true)
-
     let avgHeight
+
     const handleHeader = (config) => {
       const _headerData = cloneDeep(config.headerData)
       const _headerStyle = cloneDeep(config.headerStyle)

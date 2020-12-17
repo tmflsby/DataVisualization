@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 import {computed} from 'vue'
 export default {
   name: 'ImoocLoading',

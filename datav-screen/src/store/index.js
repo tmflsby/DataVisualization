@@ -5,12 +5,12 @@ export default Vuex.createStore({
     number: 100
   },
   mutations: {
-    SET_NUMBER (state, value) {
+    SET_NUMBER(state, value) {
       state.number = value
     }
   },
   actions: {
-    setNumber ({ commit }, value) {
+    setNumber({ commit }, value) {
       commit('SET_NUMBER', value)
     }
   },
@@ -20,7 +20,7 @@ export default Vuex.createStore({
         aa: 11
       },
       mutations: {
-        SET_AA (state, value) {
+        SET_AA(state, value) {
           state.aa = value
         }
       }
@@ -30,14 +30,13 @@ export default Vuex.createStore({
         bb: 22
       },
       mutations: {
-        SET_BB (state, value) {
+        SET_BB(state, value) {
           state.bb = value
         }
       }
     }
   },
   getters: {
-    aaValue: (state) => state.a.aa,
-    bbValue: (state) => state.b.bb
+    aaValue: (state) => state.a.aa
   }
 })

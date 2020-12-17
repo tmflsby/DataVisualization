@@ -195,7 +195,7 @@
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 import { onMounted } from 'vue'
 export default {
   name: 'SvgAnimation',

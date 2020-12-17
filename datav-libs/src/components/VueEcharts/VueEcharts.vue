@@ -1,21 +1,17 @@
 <template>
-  <div :class="[className, 'echarts']">
-  </div>
+  <div :class="[className, 'echarts']"></div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 import { watch, onMounted } from 'vue'
 import Echarts from 'echarts' // rollup配置了外部引入echarts，所以无需npm安装echarts
 import {v4 as uuidv4} from 'uuid'
-
 export default {
   name: 'VueEcharts',
-
   props: {
     options: Object,
     theme: [String, Object]
   },
-
   setup(ctx) {
     let dom
     let chart

@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 import { computed, ref, onMounted, getCurrentInstance } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 export default {
