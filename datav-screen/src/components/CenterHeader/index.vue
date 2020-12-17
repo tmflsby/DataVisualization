@@ -5,7 +5,7 @@
         <div class="center-header-left">
           <div class="bg">
             <div class="img">
-              <icon :name="iconData[index]"></icon>
+              <icon :name="iconData[index]"/>
             </div>
           </div>
         </div>
@@ -40,7 +40,7 @@ export default {
   setup(props) {
     const project = ref([])
     const headerData = ref([])
-    const iconData = ref(['money', 'orders', 'biaoqing', 'me'])
+    const iconData = ref(['jinrixiaoshoue', 'jinridingdanliang', 'jinrijiaoyiyonghu', 'jinrixinzengyonghu'])
 
     const update = () => {
       project.value = [...props.data.project]
