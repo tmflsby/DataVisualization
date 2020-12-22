@@ -566,9 +566,7 @@ export default {
                     normal: {
                       position: 'right',
                       show: true,
-                      formatter: function(params) {
-                        return params.data.name
-                      }
+                      formatter: (params) => params.data.name
                     }
                   },
                   itemStyle: {
